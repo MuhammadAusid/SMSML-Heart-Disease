@@ -1,0 +1,75 @@
+name: Heart Disease MLOps CI
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  mlflow-project:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r Membangun_model/requirements.txt
+          pip install mlflow dvc
+
+      - name: Debug Repository
+        run: |
+          pwd
+          ls -la
+          echo "===== .dvc ====="
+          ls -la .dvc || true
+          echo "===== .dvc/config ====="
+          cat .dvc/config || true
+          echo "===== DVC VERSION ====="
+          dvc version
+
+      - name: Show DVC config
+        run: |
+          echo "Current commit:"
+          git rev-parse HEAD
+
+          echo "Files:"
+          find . -maxdepth 2
+
+          echo "===== .dvc/config ====="
+          cat .dvc/config
+
+          echo "===== git status ====="
+          git status
+
+      - name: Configure DVC Authentication
+        run: |
+          dvc remote list
+          dvc remote modify origin auth basic
+          dvc remote modify origin user ${{ secrets.DAGSHUB_USERNAME }}
+          dvc remote modify origin password ${{ secrets.DAGSHUB_TOKEN }}
+
+      - name: Pull Dataset from DVC
+        run: |
+          dvc pull
+
+      - name: Check Repository
+        run: |
+          ls -la
+          test -f heart.csv && echo "heart.csv FOUND"
+
+      - name: Run MLflow Project
+        run: |
+          cd Membangun_model
+          mlflow run . -e train_all

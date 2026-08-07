@@ -1,0 +1,6 @@
+stages:
+  preprocess:
+    cmd: python pre-processing.py
+    deps:
+    - heart.csv
+    - pre-processing.py

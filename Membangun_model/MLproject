@@ -1,0 +1,16 @@
+name: Heart_Disease_Classification
+
+conda_env: conda.yaml
+
+entry_points:
+
+  baseline:
+    command: "python modelling.py"
+
+  tuning:
+    command: "python modelling_tuning.py"
+
+  train_all:
+    command: |
+      python modelling.py
+      python modelling_tuning.py

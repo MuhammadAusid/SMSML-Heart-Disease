@@ -28,6 +28,12 @@ jobs:
           pip install -r Membangun_model/requirements.txt
           pip install mlflow dvc
 
+      - name: Configure DVC Authentication
+        run: |
+          dvc remote modify origin auth basic
+          dvc remote modify origin user ${{ secrets.DAGSHUB_USERNAME }}
+          dvc remote modify origin password ${{ secrets.DAGSHUB_TOKEN }}
+
       - name: Pull Dataset from DVC
         run: |
           dvc pull

@@ -28,8 +28,20 @@ jobs:
           pip install -r Membangun_model/requirements.txt
           pip install mlflow dvc
 
+      - name: Debug Repository
+        run: |
+          pwd
+          ls -la
+          echo "===== .dvc ====="
+          ls -la .dvc || true
+          echo "===== .dvc/config ====="
+          cat .dvc/config || true
+          echo "===== DVC VERSION ====="
+          dvc version
+
       - name: Configure DVC Authentication
         run: |
+          dvc remote list
           dvc remote modify origin auth basic
           dvc remote modify origin user ${{ secrets.DAGSHUB_USERNAME }}
           dvc remote modify origin password ${{ secrets.DAGSHUB_TOKEN }}
@@ -40,9 +52,7 @@ jobs:
 
       - name: Check Repository
         run: |
-          pwd
           ls -la
-          ls -la Membangun_model
           test -f heart.csv && echo "heart.csv FOUND"
 
       - name: Run MLflow Project

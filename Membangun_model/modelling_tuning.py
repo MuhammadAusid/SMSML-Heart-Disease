@@ -51,7 +51,7 @@ def train_tuned_model():
         "criterion": ["gini", "entropy"]
     }
 
-    with mlflow.start_run(run_name="Tuned_RandomForest"):
+    with mlflow.start_run(run_name="Tuned_RandomForest", nested=True):
 
         base_model = RandomForestClassifier(
             random_state=42

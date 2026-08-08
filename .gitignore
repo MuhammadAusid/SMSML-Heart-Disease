@@ -1,1 +1,4 @@
 /heart.csv
+
+__pycache__/
+mlruns/

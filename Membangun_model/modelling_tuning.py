@@ -35,6 +35,11 @@ def train_tuned_model():
         )
     )
 
+    if not os.path.exists(data_path):
+        raise FileNotFoundError(
+            f"Dataset tidak ditemukan: {data_path}"
+        )
+
     df = load_data(data_path)
 
     X_train, X_test, y_train, y_test, scaler = preprocess_data(
@@ -104,12 +109,18 @@ def train_tuned_model():
         "heart_model.pkl"
     )
 
+    # Simpan model dan scaler untuk kebutuhan inference
+    model_artifact = {
+        "model": best_model,
+        "scaler": scaler
+    }
+
     joblib.dump(
-        best_model,
+        model_artifact,
         model_path
     )
 
-    print("Model berhasil disimpan pada:")
+    print("Model dan scaler berhasil disimpan pada:")
     print(model_path)
 
 
